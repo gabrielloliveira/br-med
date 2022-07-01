@@ -1,4 +1,5 @@
 import pytest
+from model_bakery import baker
 
 
 @pytest.fixture
@@ -42,3 +43,8 @@ def rates():
             "ZAR": 18.789244320815946,
         },
     }
+
+
+@pytest.fixture
+def quote(db):
+    return baker.make("core.Quote")
