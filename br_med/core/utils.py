@@ -1,3 +1,4 @@
+import datetime
 from datetime import date, timedelta
 
 
@@ -14,3 +15,14 @@ def range_dates(start_at: date, end_at: date):
         start_at = start_at + timedelta(days=1)
         list_dates.append(start_at)
     return list_dates
+
+
+def get_period_from_request(data: dict) -> tuple:
+    today = str(datetime.date.today())
+    start_at = data.get("start_at", today)
+    end_at = data.get("end_at", today)
+
+    start_at = datetime.datetime.strptime(start_at, "%Y-%m-%d").date()
+    end_at = datetime.datetime.strptime(end_at, "%Y-%m-%d").date()
+
+    return start_at, end_at

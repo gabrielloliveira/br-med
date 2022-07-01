@@ -1,6 +1,6 @@
 from datetime import date
 
-from br_med.core.utils import range_dates
+from br_med.core.utils import range_dates, get_period_from_request
 
 
 def test_range_dates():
@@ -17,3 +17,24 @@ def test_range_dates():
     ]
     assert len(list_dates) == 5
     assert list_dates == expected_dates
+
+
+def test_get_period_from_request():
+    """should return typle of dates"""
+    request = {
+        "start_at": "2020-01-01",
+        "end_at": "2020-01-01",
+    }
+    expected = (date(2020, 1, 1), date(2020, 1, 1))
+    result = get_period_from_request(request)
+
+    assert expected == result
+
+
+def test_get_period_from_request_with_no_request():
+    """if start_at in request, should date today"""
+    request = dict()
+    expected = (date.today(), date.today())
+    result = get_period_from_request(request)
+
+    assert expected == result
