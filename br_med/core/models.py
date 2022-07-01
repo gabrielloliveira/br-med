@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from br_med.core.enums import CurrencyEnum
+from br_med.core.managers import QuoteManager
 
 
 class DefaultBaseModel(models.Model):
@@ -19,6 +20,8 @@ class Quote(DefaultBaseModel):
     date = models.DateField(_("data de referência"))
     currency = models.CharField(_("moeda"), max_length=3, choices=CurrencyEnum.choices)
     value = models.DecimalField(_("valor da cotação"), max_digits=100, decimal_places=20)
+
+    objects = QuoteManager()
 
     class Meta:
         verbose_name = _("cotação")
