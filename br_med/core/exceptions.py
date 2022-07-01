@@ -1,0 +1,2 @@
+class VATRequestError(Exception):
+    pass
