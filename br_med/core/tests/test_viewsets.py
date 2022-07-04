@@ -21,7 +21,7 @@ class TestQuoteListView:
         response = client.get(reverse("core:api-quote-list"))
 
         assert Quote.objects.count() > 0
-        assert len(response.data) == 4
+        assert len(response.data["results"]) == 4
         assert response.status_code == status.HTTP_200_OK
 
     @mock.patch("br_med.core.services.VATService", autospec=True)
@@ -31,6 +31,6 @@ class TestQuoteListView:
         response = client.get(reverse("core:api-quote-list"))
 
         assert Quote.objects.count() == 1
-        assert len(response.data) == 1
+        assert len(response.data["results"]) == 1
         assert response.status_code == status.HTTP_200_OK
         assert not mock_service.called

@@ -38,5 +38,7 @@ class VATService:
 
     def rates(self, period: date = None) -> dict:
         endpoint = "/rates"
-        query_params = None if not period else str(period)
+        query_params = {"base": "USD"}
+        if period:
+            query_params.update({"date": period})
         return self.get(endpoint=endpoint, query_params=query_params)

@@ -1,4 +1,5 @@
 import json
+from unittest import mock
 
 import httpretty
 import pytest
@@ -69,10 +70,24 @@ def test_rates(rates):
     """
 
     base_url = settings.VAT_URL.rstrip("/")
-    currencies_url = base_url + "/rates"
-    httpretty.register_uri(httpretty.GET, currencies_url, body=json.dumps(rates))
+    rates_url = base_url + "/rates"
+    httpretty.register_uri(httpretty.GET, rates_url, body=json.dumps(rates))
 
     service = VATService()
     response = service.rates()
 
     assert response == rates
+
+
+@mock.patch.object(VATService, "get", autospec=True)
+def test_service_rates_has_base_in_usd(mock_get):
+    """
+    Service should pass in query params base=USD
+    """
+
+    service = VATService()
+    service.rates()
+
+    assert mock_get.called
+    assert "base" in mock_get.call_args.kwargs["query_params"]
+    assert mock_get.call_args.kwargs["query_params"]["base"] == "USD"
