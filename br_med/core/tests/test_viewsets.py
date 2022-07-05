@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from br_med.core.enums import CurrencyEnum
 from br_med.core.models import Quote
 
 
@@ -21,7 +22,7 @@ class TestQuoteListView:
         response = client.get(reverse("core:api-quote-list"))
 
         assert Quote.objects.count() > 0
-        assert len(response.data["results"]) == 4
+        assert len(response.data["results"]) == len(CurrencyEnum.choices)
         assert response.status_code == status.HTTP_200_OK
 
     @mock.patch("br_med.core.services.VATService", autospec=True)
@@ -31,6 +32,5 @@ class TestQuoteListView:
         response = client.get(reverse("core:api-quote-list"))
 
         assert Quote.objects.count() == 1
-        assert len(response.data["results"]) == 1
         assert response.status_code == status.HTTP_200_OK
         assert not mock_service.called

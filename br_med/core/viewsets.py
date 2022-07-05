@@ -18,13 +18,11 @@ class QuoteListView(generics.ListAPIView):
     def get_serializer_context(self):
         context = super(QuoteListView, self).get_serializer_context()
         context["period"] = self.period
-        context["range_dates"] = range_dates(start_at=self.period["start_at"], end_at=self.period["end_at"])
         return context
 
     def list(self, request, *args, **kwargs):
         quotes = self.get_queryset()
         context = self.get_serializer_context()
         serializer = self.get_serializer_class()
-        context["queryset"] = quotes
         serializer = serializer(instance=quotes, many=False, context=context)
         return Response(serializer.data)
