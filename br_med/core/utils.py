@@ -1,6 +1,10 @@
 import datetime
 from datetime import date, timedelta
 
+from br_med.core.exceptions import PeriodIsTooLargeException
+
+MAX_QTD_DAYS_FROM_PERIOD = 5
+
 
 def range_dates(start_at: date, end_at: date):
     """
@@ -24,5 +28,8 @@ def get_period_from_request(data: dict) -> tuple:
 
     start_at = datetime.datetime.strptime(start_at, "%Y-%m-%d").date()
     end_at = datetime.datetime.strptime(end_at, "%Y-%m-%d").date()
+
+    if (end_at - start_at).days > MAX_QTD_DAYS_FROM_PERIOD:
+        raise PeriodIsTooLargeException()
 
     return start_at, end_at

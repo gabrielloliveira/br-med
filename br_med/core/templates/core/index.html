@@ -1,34 +1,62 @@
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Cotações</title>
   <script src="https://code.highcharts.com/highcharts.js"></script>
+  <style>
+    form{
+        margin-top: 1rem;
+        margin-bottom: 100px;
+    }
+  </style>
 </head>
 <body>
+
+<form action="./" method="GET">
+
+  <label for="start_at">Data de Início</label>
+  <input type="date" name="start_at" id="start_at" required value="{{ period.start_at|date:'Y-m-d' }}">
+
+  <label for="end_at">Data de Fim</label>
+  <input type="date" name="end_at" id="end_at" required value="{{ period.end_at|date:'Y-m-d' }}">
+
+  <button>Pesquisar</button>
+
+</form>
+
+{% for message in messages %}
+  <h1 style="color: red">{{ message }}</h1>
+{% endfor %}
+
 <div id="graph" style="width:100%; height:400px;"></div>
 </body>
 <script>
-    function searchQuoteAPI() {
-        const endpoint = "{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{{ object.get_absolute_url }}/api/v1/quotes/"
-        fetch(endpoint)
-            .then((response) => {
-                console.log(response)
-                response.json()
-            })
-            .then((data) => {
-                console.log(data)
-                alert(data)
-            })
-    }
+    let xAxisCategories = []
+    let seriesFromContext = []
+    let aux
 
-    searchQuoteAPI()
-</script>
-<script>
+    {% for category in range_dates %}
+        aux = new Date("{{ category|date:'Y-m-d' }}")
+        xAxisCategories.push(aux)
+    {% endfor %}
+
+    {% for result in results %}
+        aux = {
+            name: "{{ result.key }}",
+            data: [],
+        }
+        {% for value in result.quotes %}
+            aux.data.push(parseFloat("{{ value|unlocalize }}"))
+        {% endfor %}
+        seriesFromContext.push(aux)
+    {% endfor %}
+
     Highcharts.chart('graph', {
 
         title: {
-            text: "Cotação das moedas entre o período {{ start_at|date:'d/m/Y' }}-{{ end_at|date:'d/m/Y' }}"
+            text: "Cotação das moedas entre o período {{ period.start_at }}-{{ period.end_at }}"
         },
 
         subtitle: {
@@ -39,6 +67,10 @@
             title: {
                 text: 'Valor'
             }
+        },
+
+        xAxis: {
+          categories: xAxisCategories,
         },
 
         legend: {
@@ -52,26 +84,10 @@
                 label: {
                     connectorAllowed: false
                 },
-                pointStart: 2010
             }
         },
 
-        series: [{
-            name: 'Installation',
-            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-        }, {
-            name: 'Manufacturing',
-            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-        }, {
-            name: 'Sales & Distribution',
-            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-        }, {
-            name: 'Project Development',
-            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-        }, {
-            name: 'Other',
-            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-        }],
+        series: seriesFromContext,
 
         responsive: {
             rules: [{
