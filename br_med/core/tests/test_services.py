@@ -4,6 +4,7 @@ from unittest import mock
 import httpretty
 import pytest
 from django.conf import settings
+from django.test import override_settings
 
 from br_med.core.services import VATService
 
@@ -47,6 +48,7 @@ def currencies():
     }
 
 
+@override_settings(VAT_URL="https://fake.com")
 @httpretty.activate(verbose=True, allow_net_connect=False)
 def test_currencies(currencies):
     """
@@ -63,6 +65,7 @@ def test_currencies(currencies):
     assert response == currencies
 
 
+@override_settings(VAT_URL="https://fake.com")
 @httpretty.activate(verbose=True, allow_net_connect=False)
 def test_rates(rates):
     """

@@ -3,10 +3,12 @@ from datetime import date
 
 import httpretty
 from django.conf import settings
+from django.test import override_settings
 
 from br_med.core.models import Quote
 
 
+@override_settings(VAT_URL="https://fake.com")
 @httpretty.activate(verbose=True, allow_net_connect=False)
 def test_search_in_service_filter(db, rates):
     """

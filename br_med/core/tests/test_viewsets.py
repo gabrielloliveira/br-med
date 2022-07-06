@@ -3,6 +3,7 @@ from unittest import mock
 
 import httpretty
 from django.conf import settings
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.reverse import reverse
 
@@ -11,6 +12,7 @@ from br_med.core.models import Quote
 
 
 class TestQuoteListView:
+    @override_settings(VAT_URL="https://fake.com")
     @httpretty.activate(verbose=True, allow_net_connect=False)
     def test_list_with_no_data(self, db, rates, client):
         """If not data in Quote, then call service and save data"""
