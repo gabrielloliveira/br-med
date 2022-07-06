@@ -26,6 +26,8 @@
 
 </form>
 
+<a href="{% url 'core:api-quote-list' %}?start_at=2022-07-01&end_at=2022-07-05">Testar a API aqui</a>
+
 {% for message in messages %}
   <h1 style="color: red">{{ message }}</h1>
 {% endfor %}
